@@ -38,7 +38,7 @@ FY7N2-6RGD2-081XZ-UYWQC-ZPKCA
 
 arm-hisiv300-linux：arm-linux交叉编译工具，用于在新的Ubuntu环境下，安装海思的交叉编译器。
 linux-3.4.y：linux内核编译目录。
-mpp：mpp包里面是视频编码的例子及测试方法
+mpp：存放媒体处理平台的目录，包里面是视频编码的例子及测试方法
 nfs：NFS服务器相关目录
 rootfs：rootfs文件系统编译目录
 rtl8188：wifi模块驱动源码，编译驱动命令
