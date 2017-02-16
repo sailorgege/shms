@@ -100,6 +100,44 @@ sf write 0x82000000 0x200000 0xE00000
 setenv bootargs 'mem=32M console=ttyAMA0,115200 root=/dev/mtdblock2 rootfstype=jffs2 mtdparts=hi_sfc:256K(boot),1792K(kernel),14336K(rootfs)';setenv bootcmd 'sf probe 0;sf read 0x82000000 0x40000 0x1C0000;bootm 0x82000000';saveenv;reset
 
 
+== 测试摄像头的视频录制功能 ================================================
+1.准备工具及环境：
+    VLC播放器、TFTPSvr.exe、SecureCRT
+    第一次测试的话需要USB转串口(CH340G)驱动（USB转串口-CH340G.EXE）
+
+2.使用SecureCRT连接设备：
+    1）摄像头板子上电：插上USB，端口应该是COM3，电源和网线先不用插。
+    2）启动SecureCRT：Protocol选择Serial，Port应该是COM3（取决于实际端口），波特率为115200，数据位8位，校验位无，停止位1位，勾选Save session，其余复选框都不选。
+    3）点击连接，此时SecureCRT应该没什么信息。
+    4）插上摄像头电源及网线，此时SecureCRT应该可以看到板子的启动信息。
+3.启动TFTPSvr.exe，并设置服务目录。
+4.将视频编码示例程序sample_venc放到TFTP服务目录下
+5.在SecureCRT中输入如下命令：
+  PS：IP地址192.168.1.100是windows的IP地址，需要改成实际的windows的IP地址
+    1）mount tmpfs /tmp -t tmpfs –o size=4m	// 设置文件传输临时目录tmp
+    2）cd /tmp		// 进入临时目录
+    3）tftp -g -r sample_venc 192.168.1.100	// 从windows下载视频编码示例程序sample_venc到tmp    4）chmod +x sample_venc		// 修改sample_venc用户权限    5）./sample_venc 0			// 启动sample_venc
+    6）出现“please input choose rc mode!”后，输入c，回车    7）出现“please press twice ENTER to exit this sample”后，等待约10秒左右，按两次回车结束运行。
+    8）查看生成的h264视频文件(ls -l)，可以看到摄像头拍摄的三个不同屏幕尺寸的.h264视频文件
+    9）将视频文件传回windows：tftp -p -l stream_chn0.h264 192.168.1.100
+    10）使用vlc即可查看这些视频文件。
+
+注意：
+1.需要让摄像头板子的IP地址，跟windows在同一个网段，可以用ifconfig在板子启动后设置一下，如：
+ifconfig eth0 192.168.2.99 netmask 255.255.255.0
+route add default gw 192.168.2.1
+
+
+
+== linux命令 ================================================
+
+-- 修改IP及网关（只能临时生效，重启后无效） ------------------------------------------------
+设置IP和掩码：
+ifconfig eth0 192.168.2.99 netmask 255.255.255.0
+
+设置网关：
+route add default gw 192.168.2.1
+
 
 
 
