@@ -176,6 +176,83 @@ ifconfig eth0 192.168.2.99 netmask 255.255.255.0
 route add default gw 192.168.2.1
 
 
+== 板子个性化定制信息 ================================================
+
+1.主机名称：“qddytt”改为“hicgege”
+linux-3.4.y/include/generated/compile.h:5:#define LINUX_COMPILE_HOST "qddytt"
+
+2.欢迎信息：“Welcome to HiLinux”改为“Welcome to GJH Linux”
+rootfs/etc/profile:32:echo "${GREEN}Welcome to HiLinux.${NORMAL}"
+
+3.ssid：“qddytt”改为“HICGEGE”
+rootfs/etc/hostapd.conf:5:ssid=qddytt
+rootfs/etc/wpa.conf:4:ssid="qddytt"
+
+4.wpa_passphrase：“qddytt11”改为“123456789”
+rootfs/etc/hostapd.conf:8:wpa_passphrase=qddytt11
+
+5.默认IP：“192.168.1.10”改为“192.168.2.99”
+rootfs/etc/init.d/rcS:22:ifconfig eth0 192.168.1.10
+改为：
+ifconfig eth0 192.168.2.99 netmask 255.255.255.0
+route add default gw 192.168.2.1
+
+--  ------------------------------------------------
+
+grep -rn "Welcome to HiLinux" *
+rootfs/etc/profile:32:echo "${GREEN}Welcome to HiLinux.${NORMAL}"
+
+
+grep -rn "System startup" *
+linux-3.4.y/arch/arm/mach-at91/leds.c:139:	case led_start:		/* System startup */
+linux-3.4.y/arch/arm/mach-ks8695/leds.c:49:	case led_start:		/* System startup */
+
+
+grep -rn "192.168.1.10" *
+linux-3.4.y/arch/arm/boot/dts/pxa168-aspenite.dts:18:		bootargs = "console=ttyS0,115200 root=/dev/nfs nfsroot=192.168.1.100:/nfsroot/ ip=192.168.1.101:192.168.1.100::255.255.255.0::eth0:on";
+linux-3.4.y/arch/arm/configs/mmp2_defconfig:19:CONFIG_CMDLINE="root=/dev/nfs rootfstype=nfs nfsroot=192.168.1.100:/nfsroot/ ip=192.168.1.101:192.168.1.100::255.255.255.0::eth0:on console=ttyS2,38400 mem=128M user_debug=255"
+linux-3.4.y/arch/arm/configs/pxa3xx_defconfig:18:CONFIG_CMDLINE="root=/dev/nfs rootfstype=nfs nfsroot=192.168.1.100:/nfsroot/ ip=192.168.1.101:192.168.1.100::255.255.255.0::eth0:on console=ttyS0,115200 mem=64M debug"
+linux-3.4.y/Documentation/networking/bonding.txt:1494:force all traffic bound to 192.168.1.100 to use eth1 in the bond as its output
+linux-3.4.y/Documentation/networking/bonding.txt:1500:	192.168.1.100 action skbedit queue_mapping 2
+linux-3.4.y/Documentation/networking/bonding.txt:1504:ip of 192.168.1.100 have their output queue mapping value overwritten to 2.
+linux-3.4.y/fs/cifs/connect.c:2156:			"unc=//192.168.1.100/public) specified");
+linux-3.4.y/sound/pci/asihpi/hpi.h:382:For 192.168.1.101
+rootfs/etc/init.d/rcS:22:ifconfig eth0 192.168.1.10
+
+
+grep -rn "qddytt" *
+linux-3.4.y/include/generated/compile.h:5:#define LINUX_COMPILE_HOST "qddytt"
+linux-3.4.y/mk3518.sh:2:cp hi3518ev200_qddytt .config
+Binary file rootfs/bin/gpio.ko matches
+rootfs/etc/hostapd.conf:5:ssid=qddytt
+rootfs/etc/hostapd.conf:8:wpa_passphrase=qddytt11
+rootfs/etc/wpa.conf:4:ssid="qddytt"
+Binary file rootfs/usr/lib/qddytt/gpio.ko matches
+Binary file rootfs-ar0130.jffs2 matches
+Binary file tftpboot/rootfs-ar0130.jffs2 matches
+wifi使用说明.txt:13:默认的热点名字：qddytt
+wifi使用说明.txt:14:密码：qddytt11
+
+grep -rn "https://hisisdk.taobao.com" *
+Binary file rootfs/bin/gpio.ko matches
+Binary file rootfs/usr/lib/qddytt/gpio.ko matches
+
+
+grep -rn "Your input Sensor type is" *
+mpp/ko/load3518e:246:	echo "==== Your input Sensor type is $SNS_TYPE ===="
+mpp/ko/load3518e:255:	echo "==== Your input Sensor type is $SNS_TYPE ===="
+mpp/ko/load3518ev201:213:	echo "==== Your input Sensor type is $SNS_TYPE ===="
+mpp/ko/load3518ev201:222:	echo "==== Your input Sensor type is $SNS_TYPE ===="
+rootfs/ko/load3518e:246:	echo "==== Your input Sensor type is $SNS_TYPE ===="
+rootfs/ko/load3518e:255:	echo "==== Your input Sensor type is $SNS_TYPE ===="
+rootfs/ko/load3518ev201:213:	echo "==== Your input Sensor type is $SNS_TYPE ===="
+rootfs/ko/load3518ev201:222:	echo "==== Your input Sensor type is $SNS_TYPE ===="
+
+grep -rn "None of nfsroot found in cmdline." *
+rootfs/usr/sbin/nfsroot:20:	echo "None of nfsroot found in cmdline."
+
+
+
 
 
 
@@ -185,6 +262,22 @@ route add default gw 192.168.2.1
 ==  ================================================
 
 --  ------------------------------------------------
+
+
+
+
+== temp ================================================
+
+--  ------------------------------------------------
+
+
+
+
+
+
+
+
+
 
 
 
