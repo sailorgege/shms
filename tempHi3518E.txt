@@ -67,19 +67,45 @@ PS: mk3518.sh 脚本里面包含了编译linux内核所需的所有的命令，�
 PS: 生成的rootfs-ar0130.jffs2这个就是要烧录到板子上的内核文件
 
 
-
-== 烧录 ================================================
+== 往板子烧录固件 ================================================
 地址空间说明
         |     256K   |      1792K    |      14336K           |
         |------------|---------------|-----------------------|
         |    boot    |     kernel    |     rootfs            |
 
+
+
+烧录流程：
+1.将uImage、rootfs-ar0130.jffs2放到tftp服务器目录
+2.启动TFTPSvr.exe，保证tftp服务器目录指向uImage、rootfs-ar0130.jffs2所在目录
+3.连接设备：插入USB、网线。
+4.启动SecureCRT，连接设备，并保持SecureCRT为激活界面。
+5.按住crtl+c，为板子上电，进入uboot
+6.修改板子的IP、网关等：192.168.2.247为windows的tftp服务器IP，192.168.2.99为板子指定的IP
+  set serverip 192.168.2.247		// windows的tftp服务器IP  set ipaddr 192.168.2.99 		// 为板子指定的IP  set ethaddr xx:xx:xx:xx:xx:xx	// 不用管  set netmask 255.255.255.0  set gatewayip 192.168.2.1		// 网关地址
+7.烧写内核程序：
+  mw.b 0x82000000 0xFF 0x1C0000
+  tftp 0x82000000 uImage
+  sf probe 0
+  sf erase 0x40000 0x1C0000
+  sf write 0x82000000 0x40000 0x1C0000
+8.烧写rootfs文件系统：
+  mw.b 0x82000000 0xFF 0xE00000
+  tftp 0x82000000 rootfs-ar0130.jffs2
+  sf probe 0
+  sf erase 0x200000 0xE00000
+  sf write 0x82000000 0x200000 0xE00000
+9.设置启动参数和启动命令：
+  setenv bootargs 'mem=32M console=ttyAMA0,115200 root=/dev/mtdblock2 rootfstype=jffs2 mtdparts=hi_sfc:256K(boot),1792K(kernel),14336K(rootfs)';setenv bootcmd 'sf probe 0;sf read 0x82000000 0x40000 0x1C0000;bootm 0x82000000';saveenv;reset
+
+
+-- 以下为资料整理 ------------------------------------------------
 板子上电时按住crtl+c，进入uboot里面烧写内核、rootfs这些
 
 -- uboot里面烧写内核 ------------------------------------------------
 set serverip 192.168.1.199;mw.b 0x82000000 0xFF 0x1C0000;tftp 0x82000000 uImage;sf probe 0;sf erase 0x40000 0x1C0000;sf write 0x82000000 0x40000 0x1C0000
 
-set serverip 192.168.1.199;   		// 设置NFS服务器IP
+set serverip 192.168.1.199;   		// 设置NFS?/tftp?服务器IP
 mw.b 0x82000000 0xFF 0x1C0000;		// 将内存地址0x82000000开始大小为0x1C0000的区域设置为0xFF
 tftp 0x82000000 uImage;  		// 从主机的tftp目录中下载uImage到0x82000000这个地址。编译出来的uImage内核文件，精简后的linux内核为1.7M大小
 sf probe 0;				// 挂载
@@ -99,6 +125,10 @@ sf write 0x82000000 0x200000 0xE00000
 -- 设置启动参数和启动命令 ------------------------------------------------
 setenv bootargs 'mem=32M console=ttyAMA0,115200 root=/dev/mtdblock2 rootfstype=jffs2 mtdparts=hi_sfc:256K(boot),1792K(kernel),14336K(rootfs)';setenv bootcmd 'sf probe 0;sf read 0x82000000 0x40000 0x1C0000;bootm 0x82000000';saveenv;reset
 
+setenv bootargs 'mem=32M console=ttyAMA0,115200 root=/dev/mtdblock2 rootfstype=jffs2 mtdparts=hi_sfc:256K(boot),1792K(kernel),14336K(rootfs)';
+setenv bootcmd 'sf probe 0;sf read 0x82000000 0x40000 0x1C0000;bootm 0x82000000';
+saveenv;
+reset
 
 == 测试摄像头的视频录制功能 ================================================
 1.准备工具及环境：
