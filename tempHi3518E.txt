@@ -1,6 +1,22 @@
 
 
 
+== 名词解释 ================================================
+Abbreviations	Full spelling 			Chinese explanation 
+缩略语		英文全名				中文解释
+SDK		Software Developer’s Kit	软件开发工具包MPP		Media Processing Platform	媒体处理平台IPC		Internet Protocol Camera	网络摄像机ISP		Image Signal Pipeline		图像信号处理LDC		Lens Distortion Correction	镜头畸变校正AI		Auto Iris Control		自动光圈控制VI		Video Input			视频输入VO		Video Output			视频输出VPSS		Video Process Sub-System	视频处理子系统/视频前处理单元，是视频数据编码前的预处理单元，主要完成对一幅输入图像的统一预处理，如去噪、去隔行等。VEDU		Video Encode Unit		视频编码单元IVE		Intelligent Video Engineering	智能加速引擎PTS		Presentation Time Stamp	时间戳DDRC		Double-Data Rate Controller	DDR 控制器MMZ		Media Memory Zone		媒体内存区域ROI		Region Of Interest		感兴趣区域
+venc		video encode			视频编码
+
+屏幕的分辨率。 
+VGA		Video Graphics Array		显示绘图矩阵，相当于640×480 像素； 
+HVGA		Half-size VGA			VGA的一半，分辨率为480×320，像三星盖世Ace S5830就是使用这分辨率； 
+QVGA		Quarter VGA			VGA的四分之一，分辨率为320×240，一般用于小屏手机 像三星盖世Mini S5570就是使用这分辨率； 
+WQVGA		Wide Quarter VGA		扩大的QVGA，分辨率比QVGA高，比VGA低，一般是：400×240，480×272； 
+WVGA		Wide Video Graphics Array	扩大的VGA，分辨率为800×480像素，像三星i9000就是使用这分辨率； 
+FWVGA		Full Wide VGA			数码产品屏幕材质的一种，VGA的另一种形式，比WVGA分辨率高，别名 ： Full Wide VGA, ，其分辨 率为854×480象素(16:9)。
+
+TDE		Two Dimensional Engine		二维引擎。利用硬件为OSD（On Screen Display）和GUI（Graphics User Interface）提供快速的图形绘制功能，主要有快速位图搬移、快速色彩填充、快速抗闪搬移、快速位图缩放、画点、画水平/垂直线、位图格式转换、位图alpha 叠加、位图按位布尔运算、ColorKey 操作。
+
 == 海思SDK资料包说明 ================================================
 
 链接：http://pan.baidu.com/s/1nv0iX6L
@@ -43,6 +59,23 @@ nfs：NFS服务器相关目录
 rootfs：rootfs文件系统编译目录
 rtl8188：wifi模块驱动源码，编译驱动命令
 tftpboot：编译好的rootfs-ar0130.jffs2及uImage
+
+
+-- 模块说明 ------------------------------------------------
+具体说明请参考：/Users/guojh/work/guojh/hds/doc/海思芯片/Hi3518E/HI3518EV200+AR0130+16M/hi3518ev200+ar0130+16m单独资料包/hi3518/mpp/mpp模块说明.txt
+
+MPP：海思媒体处理平台主要分为：
+视频输入（VI）
+视频处理（VPSS）
+视频编码（VENC）
+视频解码（VDEC）
+视频输出(VO)
+视频侦测分析(VDA)
+音频输入(AI)
+音频输出(AO)
+音频编码（AENC）
+音频解码（ADEC）
+区域管理（REGION）
 
 
 == 安装海思的交叉编译器 ================================================
@@ -235,6 +268,12 @@ route add default gw 192.168.2.1
 
 --  ------------------------------------------------
 
+搜索命令：
+grep -rn "" *
+
+查找文件命令：
+find ./ -name "hello.txt"
+
 grep -rn "Welcome to HiLinux" *
 rootfs/etc/profile:32:echo "${GREEN}Welcome to HiLinux.${NORMAL}"
 
@@ -288,7 +327,11 @@ grep -rn "None of nfsroot found in cmdline." *
 rootfs/usr/sbin/nfsroot:20:	echo "None of nfsroot found in cmdline."
 
 
-
+grep -rn "rtsp" *
+drivers/net/wireless/brcm80211/brcmsmac/main.c:5844:	u8 *rtspfb = txh->RTSPLCPFallback;
+drivers/net/wireless/brcm80211/brcmsmac/main.c:5857:	u8 *rtsph = txh->RTSPhyHeader;
+drivers/net/wireless/brcm80211/brcmsmac/main.c:5884:			     rtspfb, sizeof(txh->RTSPLCPFallback));
+drivers/net/wireless/brcm80211/brcmsmac/main.c:5903:			     rtsph, sizeof(txh->RTSPhyHeader));
 
 
 
@@ -309,16 +352,28 @@ rootfs/usr/sbin/nfsroot:20:	echo "None of nfsroot found in cmdline."
 
 痛苦虽然可怕，却能够让你变得强大！
 
+/Users/guojh/work/guojh/hds/doc/海思芯片/Hi3518E/HI3518EV200+AR0130+16M/海思SDK/Hi3518E V200R001C01SPC030
+/Users/guojh/work/guojh/hds/doc/海思芯片/Hi3518E/HI3518EV200+AR0130+16M/hi3518ev200+ar0130+16m单独资料包/hi3518/mpp
 
 
 
+用IOS实现的BLE测试程序
+用IOS实现的BLE通信测试程序，包含Central及Peripheral两部分。GGBLECentralTester是中心测试程序，GGBLEPeripheralTester是周边测试程序，两个程序可以用手机运行配合使用。
 
 
+rtsp server源码
+
+FIFO
+live555
+
+1,  推荐 live555. 
+2，ACC 的话只能软转。  
+3，海思的CPU在编码的时候不耗多少CPU，转 ACC完全够用，对于4路来讲都没问题。
 
 
-
-
-
+1.live555的效率有些低，建议不使用...
+2.编码后，需将码流放在一个缓冲区，然后rtsp再从缓冲区获取再打包传输
+3.vlc设置里将延时改成小值
 
 
 
