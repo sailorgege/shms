@@ -334,8 +334,30 @@ drivers/net/wireless/brcm80211/brcmsmac/main.c:5884:			     rtspfb, sizeof(txh->
 drivers/net/wireless/brcm80211/brcmsmac/main.c:5903:			     rtsph, sizeof(txh->RTSPhyHeader));
 
 
+== rtsp ================================================
+参考：/Users/guojh/work/guojh/hds/doc/海思芯片/Hi3518E/HI3518EV200+AR0130+16M/rtsp-3518ev200-ar0130/readme.txt
 
+主要分为如下主功能：
+一、视频流数据获取：视频采集、编码，并将流数据放入环形缓冲区中，等待由RTSP会话对象发送给客户端。
+相关方法：
+SAMPLE_VENC_1080P_CLASSIC：线程函数：开始采集视频数据，并将视频帧数据、流数据保存到环形缓冲区中。
+		与sample_venc例子中的代码区别为：强制为恒定比特率，而不是由输入参数决定。
+SAMPLE_COMM_VENC_GetVencStreamProc：线程函数，视频编码流处理：获取流数据，然后保存到环形缓冲区中
+		与sample_venc例子中的代码区别为：获取的流数据保持到环形缓冲区中，而不是保存到文件中。
+HisiPutH264DataToBuffer：将海思SDK获取到的一个帧数据，put到环形缓冲区中。
+		注意：不能超过环形缓冲区容量大小，如果容量已满则该帧会被丢弃，直到环形缓冲区被处理出空余容量才继续处理
 
+二、视频流数据储存、处理：
+相关方法：
+schedule_do：线程函数，遍历10个stScheList对象，如果有被客户SETUP及PLAY过的RTP会话，则向客户端发送环形缓冲区中的流数据
+
+三、RTSP协议业务处理：创建RTSP相关会话资源，处理客户端请求的RTSP业务请求，维护RTSP会话对象状态等
+相关方法：
+ScheduleConnections：对已有的连接进行调度：释放连接断开的会话，处理有效的会话请求（进行rtsp业务处理：向客户端发送应答信息、设置rtsp会话状态、发送流数据等操作）
+RtspServer：检查指定的rtsp连接对象，是否连接正常（使用select()来确定套接口的状态），如果连接正常，进行rtsp业务处理：向客户端发送应答信息、设置rtsp会话状态、发送流数据等操作
+RTSP_handler：处理rtsp缓冲区的数据，进行rtsp业务处理：向客户端发送应答信息、设置rtsp会话状态、发送流数据等操作
+RTSP_validate_method：返回请求方法类型，出错返回-1：从rtsp的in_buffer中，解析出方法，并设置CSeq，然后返回方法ID
+RTSP_state_machine：RTSP的状态机，用于处理RTSP协议相关业务
 
 
 ==  ================================================
